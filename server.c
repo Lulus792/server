@@ -14,7 +14,7 @@ int main() {
   int opt = 1;
   int addrlen = sizeof(address);
   char buffer[1024] = {0};
-  char *hello = "Hello from server";
+  char *msg = "0";
 
   // Creating socket file desciptor
   if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -46,10 +46,13 @@ int main() {
     exit(EXIT_FAILURE);
   }
 
-  read(new_socket, buffer, 1024);
-  printf("Message received: %s\n", buffer);
-  send(new_socket, hello, strlen(hello), 0);
-  printf("Hello message sent\n");
+  int close_server = 0;
+  while (!close_server) {
+    read(new_socket, buffer, 1024);
+    printf("%s\n", buffer);
+    send(new_socket, msg, strlen(msg), 0);
+  }
+  
 
   close(new_socket);
   close(server_fd);
