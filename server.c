@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#define PORT 8000
+#define PORT 8080 
 
 int main() {
   int server_fd, new_socket;
@@ -19,6 +19,13 @@ int main() {
   // Creating socket file desciptor
   if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
     perror("setsockopt");
+    close(server_fd);
+    exit(EXIT_FAILURE);
+  }
+
+  if (setsockopt(server_fd, 
+                 SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
+    perror("setsockopt\n");
     close(server_fd);
     exit(EXIT_FAILURE);
   }
@@ -40,7 +47,8 @@ int main() {
     exit(EXIT_FAILURE);
   }
 
-  if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0) {
+  if ((new_socket = accept(server_fd, 
+                           (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0) {
     perror("accept");
     close(server_fd);
     exit(EXIT_FAILURE);
